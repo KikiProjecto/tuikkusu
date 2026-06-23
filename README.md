@@ -5,7 +5,7 @@
 </div>
 
 <p align="center">
-  <strong>for storage & file size management</strong>
+  <strong>a TUI based management tool for storage size + tweaks selection</strong>
 </p>
 
 ---
