@@ -76,7 +76,7 @@ def main():
         size_file += select_tweak(category, options, selected_items, selected_order)
     
     display_selections(selected_items, selected_order)
-    print("\n& total size files# yang anda pilih :", size_file, "mb")
+    print("\n& total size files yang anda pilih :", size_file, "mb")
 
     if size_file > storage:
         print("MAAF! total size file yang anda pilih melebihi batas storage yang anda miliki.")
