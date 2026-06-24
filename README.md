@@ -12,3 +12,28 @@
 
 ## Quick Start 
 Prerequisites
+
+---
+
+## Project Structure
+
+```
+```
+```
+```
+```
+tuikkusu/
+├── index.html
+├── README.md
+├── src/
+|    ├── tui/
+|    |
+|    ├── web/
+|
+├── visual/
+|   ├── beta
+|   ├── preview
+|
+├── flow/
+└── ...
+```
