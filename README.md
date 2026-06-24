@@ -21,9 +21,12 @@ tuikkusu/
 ├── index.html
 ├── README.md
 ├── src/
-|    ├── tui/
-|    |
-|    ├── web/
+|    ├── app
+     |    ├── tui
+     |    |
+|    |    ├── web
+     |
+|    ├── engine/
 |
 ├── visual/
 |   ├── beta
