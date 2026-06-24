@@ -22,10 +22,9 @@ tuikkusu/
 ├── README.md
 ├── src/
 |    ├── app
-     |    ├── tui
-     |    |
+|    |    ├── tui
 |    |    ├── web
-     |
+|    |
 |    ├── engine/
 |
 ├── visual/
