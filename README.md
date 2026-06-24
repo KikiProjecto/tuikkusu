@@ -16,9 +16,6 @@ Prerequisites
 ---
 
 ## Project Structure
-
-```
-```
 ```
 ```
 ```
