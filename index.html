@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en"><head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260624-03-b2656cb"}');</script><script src="/_sdk/558340785a07a8b2.telemetry_sdk.js" integrity="sha512-w6huTWybcELc18WJb0w+HZlX471QfzMUh7gbslB6onKoaFEogFDmOPMV5FcEo5/Ws8CyGWJgk7MOklfxKnVegA=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Storage Manager TUI</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <script src="/_sdk/458114e02319f6fb.data_sdk.js" integrity="sha512-MqxhlifLEIhxYPJAUg/WtiC5CY0R45RHAAwK31m2gePcEv6/zWdaNb/OHXNXZYtkB4TsvIOYMOacwywX7AXC3g=="></script>
+  <style>
+        * { font-family: 'Space Mono', monospace; }
+        .tui-border {
+            border: 1px solid #33ff33;
+            box-shadow: 0 0 8px rgba(51, 255, 51, 0.15);
+        }
+        .blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="/_sdk/c2d1d5313c51ffe1.resizing_sdk.js" type="text/javascript" integrity="sha512-qQAMemJMRFZxVvjytpvZJuJZ53CEj6hm6koWfforoCmGBxf4dwDWZGux307fbsvtDxdw8x4TQSA+OoNoE6FzlQ=="></script>
+ </head>
+ <body data-template-id="__page-root" class="min-h-screen p-4" style="background: rgb(10, 10, 10);">
+  <header class="max-w-4xl mx-auto mb-2">
+   <div class="flex justify-between items-center">
+    <h1 data-template-id="app-title" class="canva-text font-bold" style="color: rgb(51, 255, 51); font-weight: bold; font-style: normal; font-size: 28px;">╔═ STORAGE MANAGER v1.0 ═╗</h1><span data-template-id="status-label" class="canva-text text-sm" style="color: rgb(51, 255, 51); font-weight: 400; font-style: normal; font-size: 14px;">[ONLINE]</span>
+   </div>
+   <div class="h-px bg-green-500 mt-1 opacity-50"></div>
+  </header>
+  <main class="max-w-4xl mx-auto">
+   <div class="tui-border rounded p-4 mb-4">
+    <div class="flex justify-between items-center mb-3"><span data-template-id="panel-title" class="canva-text font-bold" style="color: rgb(51, 255, 51); font-weight: bold; font-style: normal; font-size: 14px;">┌── FILE BROWSER ──┐</span> <span id="storage-info" class="text-green-400 text-xs">0 items | 0 KB</span>
+    </div>
+    <div id="file-list" class="space-y-1 min-h-[200px] max-h-[400px] overflow-y-auto">
+     <p data-template-id="empty-msg" class="canva-text opacity-60 py-8 text-center" style="color: rgb(51, 255, 51); font-weight: 400; font-style: normal; font-size: 14px;">~ no entries found. use form below to create. ~</p>
+    </div>
+   </div><!-- Add form -->
+   <div class="tui-border rounded p-4">
+    <p data-template-id="form-title" class="canva-text font-bold mb-3" style="color: rgb(51, 255, 51); font-weight: bold; font-style: normal; font-size: 14px;">$ NEW ENTRY</p>
+    <form id="add-form" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+     <div><label data-template-id="label-name" for="inp-name" class="canva-text text-xs block mb-1" style="color: rgb(34, 204, 34); font-weight: 400; font-style: normal; font-size: 14px;">NAME:</label> <input id="inp-name" type="text" required="" class="w-full bg-black border border-green-700 text-green-300 px-2 py-1 rounded text-sm focus:outline-none focus:border-green-400">
+     </div>
+     <div><label data-template-id="label-type" for="inp-type" class="canva-text text-xs block mb-1" style="color: rgb(34, 204, 34); font-weight: 400; font-style: normal; font-size: 14px;">TYPE:</label> <select id="inp-type" class="w-full bg-black border border-green-700 text-green-300 px-2 py-1 rounded text-sm focus:outline-none focus:border-green-400"> <option value="file">file</option> <option value="folder">folder</option> </select>
+     </div>
+     <div><label data-template-id="label-size" for="inp-size" class="canva-text text-xs block mb-1" style="color: rgb(34, 204, 34); font-weight: 400; font-style: normal; font-size: 14px;">SIZE (KB):</label> <input id="inp-size" type="number" min="0" value="0" class="w-full bg-black border border-green-700 text-green-300 px-2 py-1 rounded text-sm focus:outline-none focus:border-green-400">
+     </div>
+     <div><label data-template-id="label-path" for="inp-path" class="canva-text text-xs block mb-1" style="color: rgb(34, 204, 34); font-weight: 400; font-style: normal; font-size: 14px;">PATH:</label> <input id="inp-path" type="text" value="/" class="w-full bg-black border border-green-700 text-green-300 px-2 py-1 rounded text-sm focus:outline-none focus:border-green-400">
+     </div>
+     <div class="sm:col-span-2"><button data-template-id="btn-add" type="submit" class="canva-button px-4 py-1 rounded text-sm font-bold" style="background: rgb(17, 85, 17); color: rgb(51, 255, 51); font-weight: bold; font-style: normal; font-size: 14px;">$ create</button>
+     </div>
+    </form>
+   </div>
+   <footer class="mt-3 flex items-center gap-2"><span class="blink text-green-400">▮</span> <span data-template-id="footer-text" class="canva-text text-xs opacity-60" style="color: rgb(51, 255, 51); font-weight: 400; font-style: normal; font-size: 14px;">ready — hover items to delete</span>
+   </footer>
+  </main><!-- Row template -->
+  <template id="row-tpl">
+   <div data-template-id="file-row" class="canva-card flex items-center justify-between px-2 py-1 rounded text-sm hover:bg-green-900/20 group"><span class="file-info text-green-300 truncate"></span>
+    <div class="flex items-center gap-2"><span class="file-size text-green-600 text-xs"></span> <button type="button" class="del-btn text-red-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs">[rm]</button> <button type="button" class="confirm-btn hidden text-red-400 text-xs">[confirm?]</button>
+    </div>
+   </div>
+  </template>
+  <div id="limit-warning" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 bg-red-900 border border-red-500 text-red-200 px-4 py-2 rounded text-sm">
+   ⚠ Storage limit reached (999 items max)
+  </div>
+  <script src="/_sdk/ba7a87cbf0298387.editing_sdk.js" integrity="sha512-Tj5coTlt0zVGjhUTG6We0NjzvddIVl9nrFVeLejaQFP8g9Kb83FahoAtAQLehYaTUxeN5sV/r4RJs7ytEpNoVQ=="></script>
+  <script>
+        let allData = [];
+        const listEl = document.getElementById('file-list');
+        const emptyMsg = document.querySelector('[data-template-id="empty-msg"]');
+        const storageInfo = document.getElementById('storage-info');
+        const limitWarn = document.getElementById('limit-warning');
+
+        const handler = {
+            onDataChanged(data) {
+                allData = data;
+                emptyMsg.classList.toggle('hidden', data.length > 0);
+                const totalKB = data.reduce((s, r) => s + (r.size_kb || 0), 0);
+                storageInfo.textContent = `${data.length} items | ${totalKB.toLocaleString()} KB`;
+
+                const existing = new Map([...listEl.querySelectorAll('[data-item-id]')].map(el => [el.dataset.itemId, el]));
+                const ids = new Set(data.map(r => r.__backendId));
+
+                data.forEach(record => {
+                    const id = record.__backendId;
+                    if (existing.has(id)) {
+                        updateRow(existing.get(id), record);
+                        existing.delete(id);
+                    } else {
+                        listEl.appendChild(createRow(record));
+                    }
+                });
+                existing.forEach(el => el.remove());
+            }
+        };
+
+        function createRow(record) {
+            const tpl = document.getElementById('row-tpl');
+            const el = tpl.content.cloneNode(true).firstElementChild;
+            el.dataset.itemId = record.__backendId;
+            updateRow(el, record);
+
+            const delBtn = el.querySelector('.del-btn');
+            const confirmBtn = el.querySelector('.confirm-btn');
+            delBtn.addEventListener('click', () => { delBtn.classList.add('hidden'); confirmBtn.classList.remove('hidden'); });
+            confirmBtn.addEventListener('click', async () => {
+                confirmBtn.textContent = '[...]';
+                const res = await window.dataSdk.delete(record);
+                if (!res.isOk) { confirmBtn.textContent = '[err]'; }
+            });
+            return el;
+        }
+
+        function updateRow(el, record) {
+            const icon = record.type === 'folder' ? '📁' : '📄';
+            el.querySelector('.file-info').textContent = `${icon} ${record.parent_path}${record.name}`;
+            el.querySelector('.file-size').textContent = record.type === 'folder' ? 'DIR' : `${record.size_kb}KB`;
+        }
+
+        document.getElementById('add-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (allData.length >= 999) { limitWarn.classList.remove('hidden'); return; }
+            const btn = document.querySelector('[data-template-id="btn-add"]');
+            btn.disabled = true; btn.textContent = '...';
+            const res = await window.dataSdk.create({
+                name: document.getElementById('inp-name').value,
+                type: document.getElementById('inp-type').value,
+                size_kb: Number(document.getElementById('inp-size').value) || 0,
+                parent_path: document.getElementById('inp-path').value || '/',
+                created_at: new Date().toISOString()
+            });
+            btn.disabled = false; btn.textContent = '$ create';
+            if (res.isOk) { document.getElementById('inp-name').value = ''; }
+        });
+
+        (async () => {
+            const r = await window.dataSdk.init(handler);
+            if (!r.isOk) console.error('SDK init failed');
+        })();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a109038b05fbf8fc',t:'MTc4MjI3NTYwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body></html>
