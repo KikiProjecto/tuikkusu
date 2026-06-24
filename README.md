@@ -1,7 +1,7 @@
 <h1 align="center">Tuikkusu!</h1>
 
 <div align="center">
-  <img src="visual/betaPreview.png" alt="banner" width="100%"/>
+  <img src="visual/beta.png" alt="banner" width="100%"/>
 </div>
 
 <p align="center">
