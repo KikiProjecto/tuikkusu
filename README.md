@@ -17,8 +17,6 @@ Prerequisites
 
 ## Project Structure
 ```
-```
-```
 tuikkusu/
 ├── index.html
 ├── README.md
