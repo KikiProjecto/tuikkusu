@@ -12,7 +12,7 @@
 
 ## Quick Start 
 Prerequisites
-
+├── bash terminal
 ---
 
 ## Project Structure
