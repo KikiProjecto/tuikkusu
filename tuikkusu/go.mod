@@ -1,4 +1,4 @@
-module tuikkusu
+module github.com/KikiProjecto/tuikkusu/tuikkusu
 
 go 1.25.11
 

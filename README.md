@@ -66,5 +66,5 @@ tuikkusu/
 │   ├── main.go
 │   └── tuikkusu      # Executable binary
 └── visual/
-    └── beta.png
+    └── preview.png
 ```
