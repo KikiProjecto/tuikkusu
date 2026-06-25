@@ -60,8 +60,8 @@ once the TUI boots up, you will navigate through the setup phases :
 ```text
 tuikkusu/
 ├── README.md
-├── index.html
-├── main.py
+├── index.html        # beta web (under work)
+├── main.py           # program core source (college project '~')
 ├── tuikkusu/         # Go-based TUI Engine
 │   ├── go.mod
 │   ├── go.sum
