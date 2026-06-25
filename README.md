@@ -1,4 +1,6 @@
-<h1 align="center">Tuikkusu!</h1>
+<div align="center">
+  <img src="visual/anitext.gif" alt="animated head" width="100%"/>
+</div>
 
 <div align="center">
   <img src="visual/latest.png" alt="preview" width="100%"/>
@@ -32,8 +34,8 @@ npx github:KikiProjecto/tuikkusu
 pnpm dlx github:KikiProjecto/tuikkusu
 ```
 
-### Alternative: Native Go Install
-If you prefer not to use Node.js at all, you can use Go's native package manager to install it directly to your system:
+### Native Go Install
+if you prefer not to use Node.js at all, you can use Go's native package manager to install it directly to your system:
 ```bash
 go install github.com/KikiProjecto/tuikkusu/tuikkusu@latest
 tuikkusu
@@ -43,7 +45,7 @@ tuikkusu
 
 ## How to Use
 
-Once the TUI boots up, you will navigate through the gamified setup phases:
+once the TUI boots up, you will navigate through the setup phases :
 1. **Language Gate**: Use `Up/Down` or `k/j` to select English or Indonesia, then press `Enter`.
 2. **Storage Gate**: Type your physical storage limit in MB (e.g. `500.0`) and press `Enter`.
 3. **Customization Matrix**: 
