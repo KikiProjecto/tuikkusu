@@ -38,30 +38,30 @@ type LocalizationDict struct {
 
 var Localizations = map[string]LocalizationDict{
 	"en": {
-		AppTitle:          "Tuikkusu v1.0.0",
-		SelectLang:        "Select Language / Pilih Bahasa:",
-		StoragePrompt:     "Enter your system storage size capacity limit (in Megabytes):",
-		SelectedHeader:    "You have selected the following configurations:",
-		TotalSizeText:     "Total aggregate deployment file size:",
-		StorageExceeded:   "CRITICAL ERROR: Selected file payload exceeds available storage space!",
-		UndoPrompt:        "Would you like to undo your last choice stack entry? (y/n):",
-		StorageSufficient: "STORAGE CLEARANCE VERIFIED: Target space parameters are within safe thresholds.",
-		RemainingStorage:  "Available allocation space overhead remaining:",
-		SkipNotice:        "SKIPPED: No allocation selected for this category. Advancing forward.",
-		ItemCountText:     "Total individual objects queued for deployment:",
+		AppTitle:          "Tuikkusu",
+		SelectLang:        "select language / pilih bahasa:",
+		StoragePrompt:     "enter your system storage size capacity limit (in megabytes):",
+		SelectedHeader:    "you have selected the following configurations:",
+		TotalSizeText:     "total aggregate deployment file size:",
+		StorageExceeded:   "critical error: selected file payload exceeds available storage space!",
+		UndoPrompt:        "would you like to undo your last choice stack entry? (y/n):",
+		StorageSufficient: "storage clearance verified: target space parameters are within safe thresholds.",
+		RemainingStorage:  "available allocation space overhead remaining:",
+		SkipNotice:        "skipped: no allocation selected for this category. advancing forward.",
+		ItemCountText:     "total individual objects queued for deployment:",
 	},
 	"id": {
-		AppTitle:          "TUIKKUSU // ENGINE KUSTOMISASI SISTEM v1.0.0",
-		SelectLang:        "Pilih Bahasa / Select Language:",
-		StoragePrompt:     "Masukkan kapasitas batas ukuran storage perangkat anda (dalam Megabytes):",
-		SelectedHeader:    "Anda telah berhasil memilih konfigurasi berikut:",
-		TotalSizeText:     "Total keseluruhan ukuran size file item:",
-		StorageExceeded:   "PERINGATAN KRITIKAL: Total ukuran file melebihi batas kapasitas storage!",
-		UndoPrompt:        "Apakah anda ingin membatalkan entri pilihan terakhir pada sistem? (y/n):",
-		StorageSufficient: "VERIFIKASI SUKSES: Kapasitas ruang penyimpanan mencukupi untuk deployment.",
-		RemainingStorage:  "Sisa ruang kapasitas penyimpanan yang tersedia:",
-		SkipNotice:        "DILEWATKAN: Tidak ada pilihan untuk kategori ini. Melanjutkan ke menu berikutnya.",
-		ItemCountText:     "Total item yang berhasil dijadwalkan untuk dipasang:",
+		AppTitle:          "Tuikkusu",
+		SelectLang:        "pilih bahasa / select language:",
+		StoragePrompt:     "masukkan kapasitas batas ukuran storage perangkat anda (dalam megabytes):",
+		SelectedHeader:    "anda telah berhasil memilih konfigurasi berikut:",
+		TotalSizeText:     "total keseluruhan ukuran size file item:",
+		StorageExceeded:   "peringatan kritikal: total ukuran file melebihi batas kapasitas storage!",
+		UndoPrompt:        "apakah anda ingin membatalkan entri pilihan terakhir pada sistem? (y/n):",
+		StorageSufficient: "verifikasi sukses: kapasitas ruang penyimpanan mencukupi untuk deployment.",
+		RemainingStorage:  "sisa ruang kapasitas penyimpanan yang tersedia:",
+		SkipNotice:        "dilewatkan: tidak ada pilihan untuk kategori ini. melanjutkan ke menu berikutnya.",
+		ItemCountText:     "total item yang berhasil dijadwalkan untuk dipasang:",
 	},
 }
 
@@ -402,11 +402,11 @@ func (m model) View() string {
 		content = m.viewSuccess()
 	}
 
-	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, content)
+	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Top, content)
 }
 
 func (m model) viewLanguage() string {
-	header := titleStyle.Render("[tuikkusu] | Language Selection / Kustomisasi Storage")
+	header := titleStyle.Render("Tuikkusu")
 	
 	choices := ""
 	enPrefix := "[ ] "
@@ -420,14 +420,14 @@ func (m model) viewLanguage() string {
 	choices += lipgloss.NewStyle().Foreground(func() lipgloss.Color {
 		if m.langCursor == 0 { return lipgloss.Color("#00FFCC") }
 		return lipgloss.Color("#FFFFFF")
-	}()).Render(fmt.Sprintf("%sEnglish (Default)\n", enPrefix))
+	}()).Render(fmt.Sprintf("%senglish (default)\n", enPrefix))
 	
 	choices += lipgloss.NewStyle().Foreground(func() lipgloss.Color {
 		if m.langCursor == 1 { return lipgloss.Color("#00FFCC") }
 		return lipgloss.Color("#FFFFFF")
-	}()).Render(fmt.Sprintf("%sIndonesia", idPrefix))
+	}()).Render(fmt.Sprintf("%sindonesia", idPrefix))
 
-	box := boxStyle.Render(fmt.Sprintf("Phase 0: Language Gate\n\n%s", choices))
+	box := boxStyle.Render(fmt.Sprintf("phase 0: language gate\n\n%s", choices))
 	
 	return lipgloss.JoinVertical(lipgloss.Center, header, box)
 }
@@ -444,7 +444,7 @@ func (m model) viewStorageLimit() string {
 		errStr = errorStyle.Render("\n" + m.err)
 	}
 
-	box := boxStyle.Render(fmt.Sprintf("Phase 1: Max Capacity Gate\n\n%s\n%s%s", prompt, input, errStr))
+	box := boxStyle.Render(fmt.Sprintf("phase 1: max capacity gate\n\n%s\n%s%s", prompt, input, errStr))
 	
 	return lipgloss.JoinVertical(lipgloss.Center, header, box)
 }
@@ -474,7 +474,7 @@ func (m model) viewCustomization() string {
 	header := lipgloss.JoinVertical(lipgloss.Center, bannerView, headerText)
 
 	// Sidebar
-	sidebar := "CATEGORIES\n"
+	sidebar := "categories\n"
 	for i, cat := range categories {
 		prefix := "[ ]"
 		if i == m.catIndex {
@@ -488,7 +488,7 @@ func (m model) viewCustomization() string {
 
 	// Selection Matrix
 	opts := categories[m.catIndex].Options
-	matrix := "SELECTION MATRIX\n"
+	matrix := "selection matrix\n"
 	
 	for i, opt := range opts {
 		prefix := "[ ] "
@@ -523,12 +523,12 @@ func (m model) viewCustomization() string {
 	if percent > 1.0 { percent = 1.0 }
 	
 	prog := m.progress.ViewAs(percent)
-	analytics := fmt.Sprintf("REAL-TIME METRICS\nAllocated: %s %.1f%%\nStorage Left: %.1f MB / %.1f MB", 
+	analytics := fmt.Sprintf("real-time metrics\nallocated: %s %.1f%%\nstorage left: %.1f MB / %.1f MB", 
 		prog, percent*100, m.storageLimit-total, m.storageLimit)
 	analyticsView := lipgloss.NewStyle().Border(lipgloss.NormalBorder()).Padding(0, 1).Width(67).Render(analytics)
 
 	// Status line
-	status := fmt.Sprintf("STATUS: Hovering over '%s' (%s)", opts[m.optCursor].Name, opts[m.optCursor].Description)
+	status := fmt.Sprintf("status: hovering over '%s' (%s)", opts[m.optCursor].Name, opts[m.optCursor].Description)
 	if m.skipMessage != "" {
 		status += " | " + m.skipMessage
 	}
@@ -548,17 +548,17 @@ func (m model) viewUndo() string {
 
 	warningHeader := lipgloss.NewStyle().
 		Bold(true).Background(lipgloss.Color("#EF4444")).Foreground(lipgloss.Color("#FFFFFF")).
-		Padding(0, 1).Render("[WARNING: OUT OF STORAGE CAPACITY!]")
+		Padding(0, 1).Render("[warning: out of storage capacity!]")
 	
-	text1 := fmt.Sprintf("Your selections require %.1f MB above your current physical limit.", deficit)
+	text1 := fmt.Sprintf("your selections require %.1f MB above your current physical limit.", deficit)
 	
-	history := "HISTORY STACK (Press [Backspace] to Pop / Undo last action):\n"
+	history := "history stack (press [backspace] to pop / undo last action):\n"
 	for i := len(m.selections) - 1; i >= 0; i-- {
 		s := m.selections[i]
 		history += fmt.Sprintf("  [%d] %s (%s) : %.1f MB\n", i+1, s.Category, s.Option.Name, s.Option.SizeMB)
 	}
 
-	text2 := fmt.Sprintf("\nCurrent Deficit: +%.1f MB", deficit)
+	text2 := fmt.Sprintf("\ncurrent deficit: +%.1f MB", deficit)
 	
 	borderColor := lipgloss.Color("#EF4444")
 	if m.undoFlash {
@@ -569,7 +569,7 @@ func (m model) viewUndo() string {
 		lipgloss.JoinVertical(lipgloss.Left, warningHeader, "", text1, "", history, text2),
 	)
 
-	footer := "[Backspace] Undo Last  |  [Esc] Reset All Choices"
+	footer := "[backspace] undo last  |  [esc] reset all choices"
 	
 	return lipgloss.JoinVertical(lipgloss.Center, box, footer)
 }
@@ -593,7 +593,7 @@ func (m model) viewSuccess() string {
 
 	box := boxStyle.Render(lipgloss.JoinVertical(lipgloss.Left, successMsg, "", info))
 	
-	footer := "[Press Enter to Exit]"
+	footer := "[press enter to exit]"
 	
 	return lipgloss.JoinVertical(lipgloss.Center, header, box, footer)
 }
