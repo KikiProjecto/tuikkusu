@@ -21,7 +21,6 @@ tuikkusu/
 ├── README.md
 ├── index.html
 ├── main.py
-├── tui.md
 ├── src/
 │   ├── app/
 │   └── engine/
