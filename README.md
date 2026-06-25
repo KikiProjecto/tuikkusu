@@ -16,21 +16,20 @@ Prerequisites
 ---
 
 ## Project Structure
-```
+```text
 tuikkusu/
-├── index.html
 ├── README.md
+├── index.html
+├── main.py
+├── tui.md
 ├── src/
-|    ├── app
-|    |    ├── tui
-|    |    ├── web
-|    |
-|    ├── engine/
-|
-├── visual/
-|   ├── beta
-|   ├── preview
-|
-├── flow/
-└── ...
+│   ├── app/
+│   └── engine/
+├── tuikkusu/         # Go-based TUI Engine
+│   ├── go.mod
+│   ├── go.sum
+│   ├── main.go
+│   └── tuikkusu      # Executable binary
+└── visual/
+    └── beta.png
 ```
