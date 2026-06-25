@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="visual/anitext.gif" alt="animated head" width="70%"/>
+  <img src="visual/anitext.gif" alt="animated head" width="90%"/>
 </div>
 
 <div align="center">
