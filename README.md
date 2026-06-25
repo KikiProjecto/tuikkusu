@@ -21,8 +21,7 @@ To run Tuikkusu smoothly on your local machine, you will need:
 
 ## Quick start
 
-You can instantly launch the Tuikkusu TUI anywhere on your system using `npx` or `pnpm dlx`! This will securely download the wrapper, build the binary, and start the app.
-
+You can instantly launch the Tuikkusu TUI anywhere on your system using `npx` or `pnpm dlx`
 ### Using NPM:
 ```bash
 npx github:KikiProjecto/tuikkusu
@@ -30,13 +29,13 @@ npx github:KikiProjecto/tuikkusu
 
 ### Using PNPM:
 ```bash
-pnpm dlx github:kiki/tuikkusu
+pnpm dlx github:KikiProjecto/tuikkusu
 ```
 
 ### Alternative: Native Go Install
 If you prefer not to use Node.js at all, you can use Go's native package manager to install it directly to your system:
 ```bash
-go install github.com/kiki/tuikkusu/tuikkusu@latest
+go install github.com/KikiProjecto/tuikkusu/tuikkusu@latest
 tuikkusu
 ```
 
@@ -61,9 +60,6 @@ tuikkusu/
 ├── README.md
 ├── index.html
 ├── main.py
-├── src/
-│   ├── app/
-│   └── engine/
 ├── tuikkusu/         # Go-based TUI Engine
 │   ├── go.mod
 │   ├── go.sum
