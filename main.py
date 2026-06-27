@@ -60,7 +60,7 @@ def main():
     print("-----------------------------------")
     
     categories = {
-        "-theme": {"navy": 9.4, "purple": 7.1, "green": 2.5, "red": 3.0, "yellow": 2.7},
+        "-theme": {"navy": 9.4, "purple": 7.1, "green": 6.5, "red": 3.9, "yellow": 2.7},
         "-cursor": {"skyrim": 11.2, "hatsuneMiku": 13.5, "frierenBLZ": 7.8, "fluttershy": 9.3, "janeDoe": 15.9},
         "-shell": {"TST": 2.7, "obsidian": 2.5, "darkSolid": 1.9, "whiteSkin": 2.2, "retroSH": 1.2},
         "-icons": {"adwaita": 1.9, "MacTahoe": 1.3, "whitesur": 1.6, "overDose": 1.4, "Papirus": 1.2},
@@ -79,7 +79,7 @@ def main():
     print("\n& total size files yang anda pilih :", size_file, "mb")
 
     if size_file > storage:
-        print("MAAF! total size file yang anda pilih melebihi batas storage yang anda miliki.")
+        print("total size file yang anda pilih melebihi batas storage yang anda miliki.")
         undo = input("apakah anda ingin membatalkan pilihan terakhir? (ya/tidak): ").strip().lower()
         if undo in ("ya", "y"):
             size_file = handle_undo(selected_items, selected_order, size_file)
