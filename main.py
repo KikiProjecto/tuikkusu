@@ -54,7 +54,14 @@ def handle_undo(selected_items, selected_order, size_file):
     return size_file
 
 def main():
-    storage = float(input("berapa ukuran storage anda (dalam mb)?? \n"))
+    try:
+        storage = float(input("berapa ukuran storage anda (dalam mb)?? \n"))
+        if storage < 0:
+            raise ValueError("ukuran storage tidak boleh negatif")
+    except ValueError as e:
+        print(f"input tidak valid: {e}")
+        return
+    
     print("kustomisasi tweaks anda!\n")
     print("list pilihan tweaks yg tersedia :")
     print("-----------------------------------")
@@ -80,14 +87,17 @@ def main():
 
     if size_file > storage:
         print("total size file yang anda pilih melebihi batas storage yang anda miliki.")
-        undo = input("apakah anda ingin membatalkan pilihan terakhir? (ya/tidak): ").strip().lower()
-        if undo in ("ya", "y"):
-            size_file = handle_undo(selected_items, selected_order, size_file)
-            
-            if size_file <= storage:
-                print("sekarang storage anda mencukupi!.")
-            else:
-                print("masih MELEBIHI kapasitas storage anda!")
+        try:
+            undo = input("apakah anda ingin membatalkan pilihan terakhir? (ya/tidak): ").strip().lower()
+            if undo in ("ya", "y"):
+                size_file = handle_undo(selected_items, selected_order, size_file)
+                
+                if size_file <= storage:
+                    print("sekarang storage anda mencukupi!.")
+                else:
+                    print("masih MELEBIHI kapasitas storage anda!")
+        except Exception as e:
+            print(f"terjadi kesalahan: {e}")
     elif size_file <= storage:
         print("storage anda mencukupi.")
     
