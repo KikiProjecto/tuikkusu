@@ -2,14 +2,14 @@
   <img src="visual/tuikkusu-motion.gif" alt="animated head" width="90%"/>
 </div>
 
-<div align="center">
-  <img src="visual/latest.png" alt="preview" width="100%"/>
-</div>
-
 <p align="center">
   <strong>a TUI based management tool for storage size + tweaks selection >''<</strong>
 </p>
 
+---
+<div align="center">
+  <img src="visual/latest.png" alt="preview" width="100%"/>
+</div>
 ---
 
 ## Prerequisites
