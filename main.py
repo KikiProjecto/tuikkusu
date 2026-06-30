@@ -83,8 +83,8 @@ class TweakApp:
     def initialize_storage(self):
         try:
             self.storage = float(input("berapa ukuran storage anda (dalam mb)?? \n"))
-            if self.storage < 0:
-                raise ValueError("ukuran storage tidak boleh negatif")
+            if self.storage <= 0:
+                raise ValueError("ukuran storage anda tidak bisa 0 ataupun dibawahnya")
         except ValueError as e:
             print(f"input tidak valid: {e}")
             return False
