@@ -129,7 +129,7 @@ class TweakApp:
                     else:
                         print("masih MELEBIHI kapasitas storage anda!")
             except Exception as e:
-                print(f"terjadi kesalahan: {e}")
+                print(f"tidak jadi dibatalkan dan anda gagal checkout tweaks{e}")
         elif self.selector.total_size <= self.storage:
             print("storage anda mencukupi.")
         
