@@ -13,7 +13,7 @@ class TweakCategory:
                 return opt, True
         return None, False
     
-    def select(self, match):
+    def Select(self, match):
         self.selected = match
         self.selected_size = self.options[match]
         return self.selected_size
@@ -86,7 +86,7 @@ class TweakApp:
             if self.storage <= 0:
                 raise ValueError("ukuran storage anda tidak bisa 0 ataupun dibawahnya")
         except ValueError as e:
-            print(f"input tidak valid: {e}")
+            print(f"{e}")
             return False
         return True
     
