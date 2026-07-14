@@ -33,7 +33,7 @@ def hubungkan_database():
         )
         return db
     except mysql.connector.Error as err:
-        messagebox.showerror("Error Database", f"Gagal terhubung: {err}")
+        messagebox.showerror("Error database", f"Gagal terhubung: {err}")
         return None
 
 
