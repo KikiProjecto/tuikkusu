@@ -8,10 +8,7 @@
 
 ---
 <div align="center">
-  <a href="visual/review.mp4" target="_blank">
-    <img src="visual/latest.png" alt="review preview - click to play video" width="100%"/>
-  </a>
-  <p><em>▶ Klik gambar untuk memutar review video</em></p>
+  <img src="visual/review.gif" alt="review preview - click to play video" width="100%"/>
 </div>
 
 ---
