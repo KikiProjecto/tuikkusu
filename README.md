@@ -8,7 +8,7 @@
 
 ---
 <div align="center">
-  <img src="visual/latest.png" alt="preview" width="100%"/>
+  <video src="visual/review.mp4" controls width="100%"></video>
 </div>
 
 ---
