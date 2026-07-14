@@ -1,0 +1,20 @@
+{
+  "name": "tuikkusu",
+  "version": "1.0.0",
+  "description": "A TUI based management tool for storage size + tweaks selection",
+  "main": "index.js",
+  "bin": {
+    "tuikkusu": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "tui",
+    "cli",
+    "go",
+    "bubbletea"
+  ],
+  "author": "",
+  "license": "MIT"
+}
