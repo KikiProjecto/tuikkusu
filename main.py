@@ -1,15 +1,35 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import mysql.connector
+import os
+
+
+def load_env(path=".env"):
+    env = {}
+    if not os.path.exists(path):
+        return env
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            env[key.strip()] = value.strip()
+    return env
+
+
+ENV = load_env()
 
 
 def hubungkan_database():
     try:
         db = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            passwd="",
-            database="tweak_db"
+            host=ENV.get("DB_HOST", "localhost"),
+            user=ENV.get("DB_USER", "root"),
+            password=ENV.get("DB_PASSWORD", ""),
+            database=ENV.get("DB_NAME", "tweak_db"),
         )
         return db
     except mysql.connector.Error as err:
@@ -183,17 +203,18 @@ class TweakApp:
             return
 
         idx = selection[0]
-        item = self.lb_selected.get(idx)
+        item = self.lb_selected.get(idx).strip()
 
-        # format item: "-theme (navy)"
-        kategori_nama = item.split(" (")[0]
+        if item not in self.selector.selected_items:
+            self.refresh_listbox()
+            return
 
-        if item in self.selector.selected_items:
-            size = self.selector.selected_items[item]
-            del self.selector.selected_items[item]
+        size = self.selector.selected_items.pop(item)
+        if item in self.selector.selected_order:
             self.selector.selected_order.remove(item)
-            self.selector.total_size -= size
+        self.selector.total_size -= size
 
+        kategori_nama = item.split(" (")[0]
         if kategori_nama in self.combos:
             self.combos[kategori_nama].set("")
 
