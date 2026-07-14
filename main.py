@@ -179,7 +179,9 @@ class TweakApp:
                 self.selector.select_tweak(category_name, pilihan)
 
         self.refresh_listbox()
+        self.update_result_label(storage)
 
+    def update_result_label(self, storage):
         result_text = self.selector.display_selections()
         result_text += f"\nTotal size: {self.selector.total_size} mb\n"
         result_text += f"Sisa storage: {storage - self.selector.total_size} mb"
@@ -219,7 +221,13 @@ class TweakApp:
             self.combos[kategori_nama].set("")
 
         self.refresh_listbox()
-        self.cek_total()
+
+        try:
+            storage = float(self.entry_storage.get())
+        except ValueError:
+            storage = self.selector.total_size
+
+        self.update_result_label(storage)
 
     def simpan_ke_db(self):
         db = hubungkan_database()
