@@ -4,7 +4,6 @@
 
 <p align="center">
   <strong>a TUI based management tool for storage size + tweaks selection >''<</strong>
-  <strong>(this is a follow up improve from my college simple project)</strong>
 </p>
 
 ---
