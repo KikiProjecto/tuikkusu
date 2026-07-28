@@ -107,20 +107,24 @@ class TweakApp:
     def __init__(self):
         self.win = tk.Tk()
         self.win.title("Tweak Customizer")
-        self.win.geometry("500x600")
+        self.win.geometry("800x650")
 
         self.storage = 0.0
         self.selector = None
         self.combos = {}
 
         self.setup_ui()
+        self.load_from_db()
 
     def setup_ui(self):
-        lbl_storage = tk.Label(self.win, text="Masukkan Kapasitas Storage (MB):")
-        lbl_storage.pack()
+        frame_storage = tk.Frame(self.win)
+        frame_storage.pack(pady=5)
 
-        self.entry_storage = tk.Entry(self.win)
-        self.entry_storage.pack()
+        lbl_storage = tk.Label(frame_storage, text="Masukkan Kapasitas Storage (MB):")
+        lbl_storage.pack(side=tk.LEFT)
+
+        self.entry_storage = tk.Entry(frame_storage, width=10)
+        self.entry_storage.pack(side=tk.LEFT, padx=5)
 
         categories = {
             "-theme": {"navy": 9.4, "purple": 7.1, "green": 6.5, "red": 3.9, "yellow": 2.7},
@@ -132,32 +136,66 @@ class TweakApp:
 
         self.selector = TweakSelector(categories)
 
+        frame_categories = tk.Frame(self.win)
+        frame_categories.pack(pady=5)
+
         for category_name, category in self.selector.categories.items():
-            lbl = tk.Label(self.win, text=f"Pilih {category_name}:")
-            lbl.pack()
+            lbl = tk.Label(frame_categories, text=f"{category_name}:")
+            lbl.pack(anchor=tk.W)
 
             options_list = list(category.options.keys())
-            combo = ttk.Combobox(self.win, values=options_list, state="readonly")
-            combo.pack()
+            combo = ttk.Combobox(frame_categories, values=options_list, state="readonly", width=20)
+            combo.pack(anchor=tk.W, pady=2)
             self.combos[category_name] = combo
 
         btn_frame = tk.Frame(self.win)
-        btn_frame.pack(pady=10)
+        btn_frame.pack(pady=5)
 
-        btn_simpan = tk.Button(btn_frame, text="Simpan Pilihan", command=self.simpan_ke_db)
+        btn_simpan = tk.Button(btn_frame, text="Simpan", command=self.simpan_ke_db)
         btn_simpan.pack(side=tk.LEFT, padx=5)
+
+        btn_muat = tk.Button(btn_frame, text="Muat Data", command=self.load_from_db)
+        btn_muat.pack(side=tk.LEFT, padx=5)
+
+        btn_hapus = tk.Button(btn_frame, text="Hapus Pilihan", command=self.hapus_dari_db)
+        btn_hapus.pack(side=tk.LEFT, padx=5)
 
         btn_cek = tk.Button(btn_frame, text="Cek Total", command=self.cek_total)
         btn_cek.pack(side=tk.LEFT, padx=5)
 
-        btn_hapus = tk.Button(btn_frame, text="Hapus Kategori", command=self.hapus_kategori)
-        btn_hapus.pack(side=tk.LEFT, padx=5)
+        btn_undo = tk.Button(btn_frame, text="Undo", command=self.undo_terakhir)
+        btn_undo.pack(side=tk.LEFT, padx=5)
 
-        lbl_list = tk.Label(self.win, text="Kategori yang dipilih:")
+        lbl_list = tk.Label(self.win, text="Pilihan Tweak:")
         lbl_list.pack()
 
-        self.lb_selected = tk.Listbox(self.win, height=8, width=60)
+        self.lb_selected = tk.Listbox(self.win, height=6, width=60)
         self.lb_selected.pack()
+
+        lbl_db = tk.Label(self.win, text="Data di Database:")
+        lbl_db.pack()
+
+        frame_tree = tk.Frame(self.win)
+        frame_tree.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+
+        scrollbar = ttk.Scrollbar(frame_tree)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.tree = ttk.Treeview(frame_tree, columns=("id", "kategori", "item", "ukuran", "created_at"), show="headings", yscrollcommand=scrollbar.set)
+        self.tree.heading("id", text="ID")
+        self.tree.heading("kategori", text="Kategori")
+        self.tree.heading("item", text="Item")
+        self.tree.heading("ukuran", text="Ukuran (MB)")
+        self.tree.heading("created_at", text="Dibuat")
+
+        self.tree.column("id", width=50)
+        self.tree.column("kategori", width=150)
+        self.tree.column("item", width=150)
+        self.tree.column("ukuran", width=100)
+        self.tree.column("created_at", width=150)
+
+        self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.config(command=self.tree.yview)
 
         self.lbl_result = tk.Label(self.win, text="", justify=tk.LEFT)
         self.lbl_result.pack()
@@ -198,25 +236,13 @@ class TweakApp:
         for item in self.selector.selected_order:
             self.lb_selected.insert(tk.END, item)
 
-    def hapus_kategori(self):
-        selection = self.lb_selected.curselection()
-        if not selection:
-            messagebox.showwarning("Peringatan", "Pilih kategori yang ingin dihapus dari daftar!")
+    def undo_terakhir(self):
+        last_item, removed_size = self.selector.handle_undo()
+        if last_item is None:
+            messagebox.showinfo("Info", "Tidak ada pilihan untuk di-undo.")
             return
 
-        idx = selection[0]
-        item = self.lb_selected.get(idx).strip()
-
-        if item not in self.selector.selected_items:
-            self.refresh_listbox()
-            return
-
-        size = self.selector.selected_items.pop(item)
-        if item in self.selector.selected_order:
-            self.selector.selected_order.remove(item)
-        self.selector.total_size -= size
-
-        kategori_nama = item.split(" (")[0]
+        kategori_nama = last_item.split(" (")[0]
         if kategori_nama in self.combos:
             self.combos[kategori_nama].set("")
 
@@ -229,16 +255,74 @@ class TweakApp:
 
         self.update_result_label(storage)
 
+    def load_from_db(self):
+        db = hubungkan_database()
+        if db is None:
+            return
+
+        cursor = None
+        try:
+            cursor = db.cursor()
+            cursor.execute("SELECT id, kategori, item, ukuran, created_at FROM tb_pilihan")
+            rows = cursor.fetchall()
+
+            for item in self.tree.get_children():
+                self.tree.delete(item)
+
+            for row in rows:
+                self.tree.insert("", tk.END, values=row)
+
+            messagebox.showinfo("Sukses", f"Data berhasil dimuat: {len(rows)} records.")
+        except mysql.connector.Error as err:
+            messagebox.showerror("Error Database", f"Gagal memuat data: {err}")
+        finally:
+            if cursor:
+                cursor.close()
+            db.close()
+
+    def hapus_dari_db(self):
+        selected = self.tree.selection()
+        if not selected:
+            messagebox.showwarning("Peringatan", "Pilih data yang ingin dihapus dari database!")
+            return
+
+        item_values = self.tree.item(selected[0])["values"]
+        record_id = item_values[0]
+
+        confirm = messagebox.askyesno("Konfirmasi", f"Hapus record ID {record_id} dari database?")
+        if not confirm:
+            return
+
+        db = hubungkan_database()
+        if db is None:
+            return
+
+        cursor = None
+        try:
+            cursor = db.cursor()
+            sql = "DELETE FROM tb_pilihan WHERE id=%s"
+            cursor.execute(sql, (record_id,))
+            db.commit()
+
+            self.tree.delete(selected[0])
+            messagebox.showinfo("Sukses", f"Record ID {record_id} berhasil dihapus dari database!")
+        except mysql.connector.Error as err:
+            messagebox.showerror("Error Database", f"Gagal menghapus: {err}")
+        finally:
+            if cursor:
+                cursor.close()
+            db.close()
+
     def simpan_ke_db(self):
         db = hubungkan_database()
         if db is None:
             return
 
-        cursor = db.cursor()
-
-        sql = "INSERT INTO tb_pilihan (kategori, item, ukuran) VALUES (%s, %s, %s)"
-
+        cursor = None
         try:
+            cursor = db.cursor()
+            sql = "INSERT INTO tb_pilihan (kategori, item, ukuran) VALUES (%s, %s, %s)"
+
             for category_name, category in self.selector.categories.items():
                 if category.selected:
                     val = (category_name, category.selected, category.selected_size)
@@ -246,10 +330,12 @@ class TweakApp:
 
             db.commit()
             messagebox.showinfo("Sukses", "Data berhasil disimpan ke database!")
+            self.load_from_db()
         except mysql.connector.Error as err:
             messagebox.showerror("Error Database", f"Gagal menyimpan: {err}")
         finally:
-            cursor.close()
+            if cursor:
+                cursor.close()
             db.close()
 
 

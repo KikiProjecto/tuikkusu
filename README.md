@@ -63,11 +63,79 @@ tuikkusu/
 ├── README.md
 ├── index.html        # beta web (under work)
 ├── main.py           # program core source (college project '~')
+├── app.py            # Flask web application
+├── setup_db.sql      # MySQL database schema & access setup
 ├── tuikkusu/         # Go-based TUI Engine
 │   ├── go.mod
 │   ├── go.sum
 │   ├── main.go
 │   └── tuikkusu      # Executable binary
-└── visual/
-    └── preview.png
+└── templates/
+    └── index.html    # Flask web template
+```
+
+---
+
+## Setup for Python Desktop & Flask Web (CachyOS / Arch Linux)
+
+### 1. Install Dependencies
+
+On **CachyOS** (Arch-based), `tk` often isn't included with the default Python package. Install it first:
+
+```bash
+sudo pacman -S tk
+```
+
+Then set up a virtual environment and install Python packages:
+
+```bash
+python -m venv env
+source env/bin/activate
+pip install flask mysql-connector-python
+```
+
+### 2. Setup Database
+
+Make sure MySQL/MariaDB is running, then import the schema:
+
+```bash
+sudo mysql < setup_db.sql
+```
+
+This creates the `tweak_db` database, the `tb_pilihan` table, and the `tuikkusu` user with full privileges.
+
+### 3. Run Desktop App (Tkinter GUI)
+
+```bash
+python main.py
+```
+
+The desktop app provides:
+- **Entry**: Input storage capacity (MB)
+- **Combobox**: Select tweak options per category
+- **Treeview**: View records from `tb_pilihan` in real-time
+- **Buttons**: Simpan (Create), Muat Data (Read), Hapus Pilihan (Delete by ID), Cek Total, Undo
+
+### 4. Run Flask Web App
+
+```bash
+python app.py
+```
+
+Then open `http://localhost:5000` in your browser. The web version shares the same MySQL database (`tweak_db`) as the desktop GUI.
+
+Routes:
+- `/` - Main customization page with form and data table
+- `/add` - Create new tweak record (POST)
+- `/delete/<int:id>` - Delete record by ID
+
+### 5. Environment Variables
+
+The apps read database credentials from `.env`:
+
+```env
+DB_HOST=localhost
+DB_USER=tuikkusu
+DB_PASSWORD=tuikkusu123
+DB_NAME=tweak_db
 ```

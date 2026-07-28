@@ -1,5 +1,5 @@
-# Setup Database untuk Tuikkusu
-# Jalankan: sudo mysql < setup_db.sql
+-- Setup Database untuk Tuikkusu
+-- Jalankan: sudo mysql < setup_db.sql
 
 CREATE DATABASE IF NOT EXISTS tweak_db;
 USE tweak_db;
