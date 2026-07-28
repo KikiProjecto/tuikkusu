@@ -15,7 +15,7 @@
 
 ## Prerequisites
 
-To run Tuikkusu smoothly on your local machine, you will need:
+To run tuikkusu smoothly on your local, you will need:
 - **Go (Golang)**: v1.21 or higher installed (to compile and run the engine). Download from [go.dev](https://go.dev/).
 - **Node.js & npm/pnpm**: Required *only* if you want to run it dynamically via npx without cloning the repository.
 - **Terminal**: A modern terminal emulator (e.g., iTerm2, Windows Terminal, Alacritty) with a bash/zsh shell to properly render the TUI graphics.
