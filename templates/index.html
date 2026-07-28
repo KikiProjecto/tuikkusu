@@ -3,109 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tuikkusu - Tweak Customizer</title>
+    <title>Tuikkusu</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            border-bottom: 2px solid #4CAF50;
-            padding-bottom: 10px;
-        }
-        .form-section {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 10px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .btn-delete {
-            background-color: #f44336;
-            text-decoration: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            color: white;
-            font-size: 12px;
-        }
-        .btn-delete:hover {
-            background-color: #da190b;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-        .flash {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
-        .flash.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .flash.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #333; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; }
+        .section { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        button:hover { background-color: #45a049; }
+        .btn-delete { background-color: #f44336; text-decoration: none; padding: 5px 10px; border-radius: 3px; color: white; font-size: 12px; border: none; cursor: pointer; }
+        .btn-delete:hover { background-color: #da190b; }
+        .status-bar { background-color: #e8f5e9; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-weight: bold; color: #2e7d32; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #4CAF50; color: white; }
+        tr:hover { background-color: #f5f5f5; }
+        .flash { padding: 10px; margin-bottom: 15px; border-radius: 4px; }
+        .flash.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .flash.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .selected-list { background: white; padding: 10px; border-radius: 4px; border: 1px solid #ddd; min-height: 40px; }
+        .option-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #ddd; }
+        .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+        .category-group { margin-bottom: 15px; padding: 10px; background: white; border-radius: 4px; border: 1px solid #ddd; }
+        .category-title { font-weight: bold; color: #333; margin-bottom: 8px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Tweak Customizer - Web Version</h1>
+        <h1>Tuikkusu</h1>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -115,33 +43,83 @@
             {% endif %}
         {% endwith %}
 
-        <div class="form-section">
-            <h2>Tambah Tweak Baru</h2>
-            <form method="POST" action="/add">
+        {% if message %}
+            <div class="flash success">{{ message }}</div>
+        {% endif %}
+
+        <!-- Step 1: Input Storage -->
+        <div class="section">
+            <h2>Masukkan Kapasitas Storage</h2>
+            <form method="POST">
                 <div class="form-group">
-                    <label for="kategori">Kategori:</label>
-                    <select id="kategori" name="kategori" required>
-                        <option value="">-- Pilih Kategori --</option>
-                        <option value="-theme">-theme</option>
-                        <option value="-cursor">-cursor</option>
-                        <option value="-shell">-shell</option>
-                        <option value="-icons">-icons</option>
-                        <option value="-fonts">-fonts</option>
-                    </select>
+                    <label for="storage">Storage (MB):</label>
+                    <input type="number" id="storage" name="storage" step="0.1" min="0" value="{{ storage_limit }}" required>
                 </div>
-                <div class="form-group">
-                    <label for="item">Item:</label>
-                    <input type="text" id="item" name="item" required>
-                </div>
-                <div class="form-group">
-                    <label for="ukuran">Ukuran (MB):</label>
-                    <input type="number" id="ukuran" name="ukuran" step="0.1" min="0" required>
-                </div>
-                <button type="submit">Simpan</button>
+                <button type="submit" name="action" value="set_storage">Set Storage</button>
             </form>
         </div>
 
-        <h2>Data Tweak di Database</h2>
+        {% if storage_limit > 0 %}
+        <!-- Step 2: Status -->
+        <div class="status-bar">
+            Total Digunakan: {{ total_used }} MB | Sisa Storage: {{ sisa }} MB
+        </div>
+
+        <!-- Step 3: Pilih Tweaks -->
+        <form method="POST">
+            <div class="section">
+                <h2>Pilih Tweaks</h2>
+
+                {% for kategori, items in categories.items() %}
+                    <div class="category-group">
+                        <div class="category-title">{{ kategori }}</div>
+                        <select name="tweak_{{ kategori }}">
+                            <option value="">-- Pilih --</option>
+                            {% for item, ukuran in items.items() %}
+                                <option value="{{ item }}">{{ item }} ({{ ukuran }} MB)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endfor %}
+
+                <div class="form-group">
+                    <label>Pilihan Anda:</label>
+                    <div class="selected-list">
+                        {% if selected_order %}
+                            {% for key in selected_order %}
+                                <div class="option-row">
+                                    <span>{{ key }} - {{ selected[key] }} MB</span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p style="color:#999; text-align: center;">Belum ada pilihan</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Hapus Pilihan:</label>
+                    <select name="hapus_key">
+                        <option value="">-- Pilih yang ingin dihapus --</option>
+                        {% for key in selected_order %}
+                            <option value="{{ key }}">{{ key }} - {{ selected[key] }} MB</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" name="action" value="pilih">Pilih</button>
+                    <button type="submit" name="action" value="hapus_pilihan">Hapus Pilihan</button>
+                    <button type="submit" name="action" value="reset">Reset</button>
+                    <button type="submit" name="action" value="simpan">Simpan ke DB</button>
+                    <button type="submit" name="action" value="muat">Muat Data</button>
+                </div>
+            </div>
+        </form>
+        {% endif %}
+
+        <!-- Step 4: Data di Database -->
+        <h2>Data di Database</h2>
         <table>
             <thead>
                 <tr>
@@ -163,7 +141,9 @@
                             <td>{{ record[3] }}</td>
                             <td>{{ record[4] }}</td>
                             <td>
-                                <a href="/delete/{{ record[0] }}" class="btn-delete" onclick="return confirm('Hapus record ID {{ record[0] }}?')">Hapus</a>
+                                <form method="POST" action="/delete/{{ record[0] }}" style="display:inline;" onsubmit="return confirm('Hapus record ID {{ record[0] }}?')">
+                                    <button type="submit" class="btn-delete">Hapus</button>
+                                </form>
                             </td>
                         </tr>
                     {% endfor %}

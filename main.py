@@ -27,17 +27,38 @@ def hubungkan_database():
     try:
         db = mysql.connector.connect(
             host=ENV.get("DB_HOST", "localhost"),
-            user=ENV.get("DB_USER", "root"),
-            password=ENV.get("DB_PASSWORD", ""),
+            user=ENV.get("DB_USER", "tuikkusu"),
+            password=ENV.get("DB_PASSWORD", "tuikkusu123"),
             database=ENV.get("DB_NAME", "tweak_db"),
         )
         return db
     except mysql.connector.Error as err:
-        messagebox.showerror("Error database", f"Gagal terhubung: {err}")
+        messagebox.showerror("Error Database", f"Gagal terhubung: {err}")
         return None
 
 
 class TweakCategory:
+    @classmethod
+    def load_options_from_db(cls):
+        db = hubungkan_database()
+        if db is None:
+            return {}
+        cursor = None
+        options = {}
+        try:
+            cursor = db.cursor()
+            cursor.execute("SELECT kategori, item, ukuran FROM tb_pilihan")
+            rows = cursor.fetchall()
+            for kategori, item, ukuran in rows:
+                options.setdefault(kategori, {})[item] = float(ukuran)
+        except mysql.connector.Error as err:
+            messagebox.showerror("Error Database", f"Gagal memuat opsi: {err}")
+        finally:
+            if cursor:
+                cursor.close()
+            db.close()
+        return options
+
     def __init__(self, name, options):
         self.name = name
         self.options = options
@@ -67,6 +88,15 @@ class TweakSelector:
         self.selected_order = []
         self.total_size = 0.0
 
+    @classmethod
+    def load_categories_from_db(cls):
+        options = TweakCategory.load_options_from_db()
+        return cls(options)
+
+    def calculate_total(self):
+        self.total_size = sum(self.selected_items.values())
+        return self.total_size
+
     def select_tweak(self, category_name, pilihan):
         category = self.categories[category_name]
 
@@ -79,8 +109,9 @@ class TweakSelector:
             size = category.select(match)
             key = f"{category.name} ({match})"
             self.selected_items[key] = size
-            self.selected_order.append(key)
-            self.total_size += size
+            if key not in self.selected_order:
+                self.selected_order.append(key)
+            self.calculate_total()
             return size
         else:
             return None
@@ -92,6 +123,26 @@ class TweakSelector:
         result.append(f"total item yang dipilih: {len(self.selected_order)}")
         return "\n".join(result)
 
+    def delete_tweak(self, record_id):
+        db = hubungkan_database()
+        if db is None:
+            return False
+
+        cursor = None
+        try:
+            cursor = db.cursor()
+            sql = "DELETE FROM tb_pilihan WHERE id=%s"
+            cursor.execute(sql, (record_id,))
+            db.commit()
+            return cursor.rowcount > 0
+        except mysql.connector.Error as err:
+            messagebox.showerror("Error Database", f"Gagal menghapus data: {err}")
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+            db.close()
+
     def handle_undo(self):
         if not self.selected_order:
             return None, self.total_size
@@ -102,11 +153,19 @@ class TweakSelector:
 
         return last_item, removed_size
 
+    def reset(self):
+        self.selected_items = {}
+        self.selected_order = []
+        self.total_size = 0.0
+        for category in self.categories.values():
+            category.selected = None
+            category.selected_size = 0.0
+
 
 class TweakApp:
     def __init__(self):
         self.win = tk.Tk()
-        self.win.title("Tweak Customizer")
+        self.win.title("Tuikkusu - Tweak Customizer")
         self.win.geometry("800x650")
 
         self.storage = 0.0
@@ -114,7 +173,7 @@ class TweakApp:
         self.combos = {}
 
         self.setup_ui()
-        self.load_from_db()
+        self.reset_all()
 
     def setup_ui(self):
         frame_storage = tk.Frame(self.win)
@@ -126,13 +185,15 @@ class TweakApp:
         self.entry_storage = tk.Entry(frame_storage, width=10)
         self.entry_storage.pack(side=tk.LEFT, padx=5)
 
-        categories = {
-            "-theme": {"navy": 9.4, "purple": 7.1, "green": 6.5, "red": 3.9, "yellow": 2.7},
-            "-cursor": {"skyrim": 11.2, "hatsuneMiku": 13.5, "frierenBLZ": 7.8, "fluttershy": 9.3, "janeDoe": 15.9},
-            "-shell": {"TST": 2.7, "obsidian": 2.5, "darkSolid": 1.9, "whiteSkin": 2.2, "retroSH": 1.2},
-            "-icons": {"adwaita": 1.9, "MacTahoe": 1.3, "whitesur": 1.6, "overDose": 1.4, "Papirus": 1.2},
-            "-fonts": {"inter": 0.5, "JetbrainsMono": 0.6, "poppins": 0.8, "SF Pro": 0.4, "TimesNewRoman": 0.2},
-        }
+        categories = TweakCategory.load_options_from_db()
+        if not categories:
+            categories = {
+                "-theme": {"navy": 9.4, "purple": 7.1, "green": 6.5, "red": 3.9, "yellow": 2.7},
+                "-cursor": {"skyrim": 11.2, "hatsuneMiku": 13.5, "frierenBLZ": 7.8, "fluttershy": 9.3, "janeDoe": 15.9},
+                "-shell": {"TST": 2.7, "obsidian": 2.5, "darkSolid": 1.9, "whiteSkin": 2.2, "retroSH": 1.2},
+                "-icons": {"adwaita": 1.9, "MacTahoe": 1.3, "whitesur": 1.6, "overDose": 1.4, "Papirus": 1.2},
+                "-fonts": {"inter": 0.5, "JetbrainsMono": 0.6, "poppins": 0.8, "SF Pro": 0.4, "TimesNewRoman": 0.2},
+            }
 
         self.selector = TweakSelector(categories)
 
@@ -146,6 +207,8 @@ class TweakApp:
             options_list = list(category.options.keys())
             combo = ttk.Combobox(frame_categories, values=options_list, state="readonly", width=20)
             combo.pack(anchor=tk.W, pady=2)
+            combo.set("")
+            combo.bind("<<ComboboxSelected>>", lambda e: self.on_selection_change())
             self.combos[category_name] = combo
 
         btn_frame = tk.Frame(self.win)
@@ -165,6 +228,9 @@ class TweakApp:
 
         btn_undo = tk.Button(btn_frame, text="Undo", command=self.undo_terakhir)
         btn_undo.pack(side=tk.LEFT, padx=5)
+
+        btn_reset = tk.Button(btn_frame, text="Reset", command=self.reset_all)
+        btn_reset.pack(side=tk.LEFT, padx=5)
 
         lbl_list = tk.Label(self.win, text="Pilihan Tweak:")
         lbl_list.pack()
@@ -197,8 +263,63 @@ class TweakApp:
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.config(command=self.tree.yview)
 
-        self.lbl_result = tk.Label(self.win, text="", justify=tk.LEFT)
-        self.lbl_result.pack()
+        self.lbl_status = tk.Label(self.win, text="Total Digunakan: 0.0 MB | Sisa Storage: 0.0 MB", justify=tk.LEFT)
+        self.lbl_status.pack()
+
+    def reset_all(self):
+        db = hubungkan_database()
+        if db:
+            cursor = None
+            try:
+                cursor = db.cursor()
+                cursor.execute("TRUNCATE TABLE tb_pilihan")
+                db.commit()
+            except mysql.connector.Error as err:
+                messagebox.showerror("Error Database", f"Gagal mereset database: {err}")
+            finally:
+                if cursor:
+                    cursor.close()
+                db.close()
+
+        self.selector.reset()
+        self.storage = 0.0
+        self.entry_storage.delete(0, tk.END)
+        for combo in self.combos.values():
+            combo.set("")
+        self.lb_selected.delete(0, tk.END)
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        self.lbl_status.config(text="Total Digunakan: 0.0 MB | Sisa Storage: 0.0 MB")
+        messagebox.showinfo("Reset", "Semua data lokal dan database telah direset!")
+
+    def on_selection_change(self):
+        try:
+            storage = float(self.entry_storage.get())
+        except ValueError:
+            storage = None
+
+        self.selector.selected_items = {}
+        self.selector.selected_order = []
+        self.selector.total_size = 0.0
+
+        for category_name, combo in self.combos.items():
+            pilihan = combo.get()
+            if pilihan:
+                self.selector.select_tweak(category_name, pilihan)
+
+        self.refresh_listbox()
+        self.update_status_label(storage)
+
+    def update_status_label(self, storage):
+        total = self.selector.calculate_total()
+        if storage is None:
+            try:
+                storage = float(self.entry_storage.get())
+            except ValueError:
+                storage = 0.0
+
+        sisa = storage - total
+        self.lbl_status.config(text=f"Total Digunakan: {total} MB | Sisa Storage: {sisa} MB")
 
     def cek_total(self):
         try:
@@ -217,19 +338,12 @@ class TweakApp:
                 self.selector.select_tweak(category_name, pilihan)
 
         self.refresh_listbox()
-        self.update_result_label(storage)
-
-    def update_result_label(self, storage):
-        result_text = self.selector.display_selections()
-        result_text += f"\nTotal size: {self.selector.total_size} mb\n"
-        result_text += f"Sisa storage: {storage - self.selector.total_size} mb"
+        self.update_status_label(storage)
 
         if self.selector.total_size > storage:
-            result_text += "\nMelebihi kapasitas storage!"
+            messagebox.showwarning("Peringatan", "Total pilihan melebihi kapasitas storage!")
         else:
-            result_text += "\nStorage mencukupi."
-
-        self.lbl_result.config(text=result_text)
+            messagebox.showinfo("Info", f"Storage mencukupi.\nTotal: {self.selector.total_size} MB\nSisa: {storage - self.selector.total_size} MB")
 
     def refresh_listbox(self):
         self.lb_selected.delete(0, tk.END)
@@ -251,9 +365,9 @@ class TweakApp:
         try:
             storage = float(self.entry_storage.get())
         except ValueError:
-            storage = self.selector.total_size
+            storage = None
 
-        self.update_result_label(storage)
+        self.update_status_label(storage)
 
     def load_from_db(self):
         db = hubungkan_database()
@@ -283,7 +397,7 @@ class TweakApp:
     def hapus_dari_db(self):
         selected = self.tree.selection()
         if not selected:
-            messagebox.showwarning("Peringatan", "Pilih data yang ingin dihapus dari database!")
+            messagebox.showwarning("Peringatan", "Pilih data yang ingin dihapus dari tabel!")
             return
 
         item_values = self.tree.item(selected[0])["values"]
@@ -293,25 +407,10 @@ class TweakApp:
         if not confirm:
             return
 
-        db = hubungkan_database()
-        if db is None:
-            return
-
-        cursor = None
-        try:
-            cursor = db.cursor()
-            sql = "DELETE FROM tb_pilihan WHERE id=%s"
-            cursor.execute(sql, (record_id,))
-            db.commit()
-
+        if self.selector.delete_tweak(record_id):
             self.tree.delete(selected[0])
-            messagebox.showinfo("Sukses", f"Record ID {record_id} berhasil dihapus dari database!")
-        except mysql.connector.Error as err:
-            messagebox.showerror("Error Database", f"Gagal menghapus: {err}")
-        finally:
-            if cursor:
-                cursor.close()
-            db.close()
+            messagebox.showinfo("Sukses", f"Record ID {record_id} berhasil dihapus!")
+            self.on_selection_change()
 
     def simpan_ke_db(self):
         db = hubungkan_database()
