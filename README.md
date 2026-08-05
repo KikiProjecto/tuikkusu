@@ -76,11 +76,11 @@ tuikkusu/
 
 ---
 
-## Setup for Python Desktop & Flask Web (CachyOS / Arch Linux)
+## Setup for desktop & flask web
 
 ### 1. Install Dependencies
 
-On **CachyOS** (Arch-based), `tk` often isn't included with the default Python package. Install it first:
+Install it first :
 
 ```bash
 sudo pacman -S tk
