@@ -3,7 +3,7 @@
 </div>
 
 <p align="center">
-  <strong>it is a TUI based management tool for storage size + tweaks selection >''<</strong>
+  <strong>TUI based management tool for storage size + tweaks selection >''<</strong>
 </p>
 
 ---
